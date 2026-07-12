@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://gold-mramor.ru/sitemap.xml
+
+Host: https://gold-mramor.ru
