@@ -1228,58 +1228,69 @@
                     </div>
                 </div>
                 <div class="contact-form animate-on-scroll delay-2">
-                    <form id="contactForm" action="https://formspree.io/f/xgaeaybn" method="post" enctype="text/plain" onsubmit="alert('Заявка отправлена на gold.mramor@mail.ru! Мы свяжемся с вами в течение 15 минут.');">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Ваше имя</label>
-                                <input type="text" name="name" placeholder="Иван Иванов" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Телефон</label>
-                                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="email" placeholder="email@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Тип работ</label>
-                            <select name="service" required>
-                                <option value="">Выберите услугу</option>
-                                <option value="shlifovka">Шлифовка мрамора/гранита</option>
-                                <option value="polirovka">Полировка и переполировка</option>
-                                <option value="restavraciya">Реставрация камня</option>
-                                <option value="kristallizaciya">Кристаллизация мрамора</option>
-                                <option value="propitka">Пропитка и защита</option>
-                                <option value="kompleks">Комплексная реставрация</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Город / Регион</label>
-                            <select name="region" required>
-                                <option value="">Выберите регион</option>
-                                <option value="moskva">Москва</option>
-                                <option value="moskovskaya">Московская область</option>
-                                <option value="spb">Санкт-Петербург</option>
-                                <option value="leningradskaya">Ленинградская область</option>
-                                <option value="drugoy">Другой регион</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Площадь (приблизительно)</label>
-                            <input type="text" name="area" placeholder="Например: 50 м2">
-                        </div>
-                        <div class="form-group">
-                            <label>Комментарий</label>
-                            <textarea name="message" placeholder="Опишите задачу, тип камня, состояние поверхности..."></textarea>
-                        </div>
-                        <button type="submit" class="form-submit">
-                            <i class="fas fa-paper-plane"></i> Отправить заявку
-                        </button>
-                        <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="#">политикой конфиденциальности</a></p>
-                    </form>
-                </div>
+    <!-- Убрали enctype и onsubmit, оставили только action и method -->
+    <form id="contactForm" action="https://formspree.io/f/xgaeaybn" method="POST">
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" name="name" placeholder="Иван Иванов" required>
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="email@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Тип работ</label>
+            <select name="service" required>
+                <option value="">Выберите услугу</option>
+                <option value="shlifovka">Шлифовка мрамора/гранита</option>
+                <option value="polirovka">Полировка и переполировка</option>
+                <option value="restavraciya">Реставрация камня</option>
+                <option value="kristallizaciya">Кристаллизация мрамора</option>
+                <option value="propitka">Пропитка и защита</option>
+                <option value="kompleks">Комплексная реставрация</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Город / Регион</label>
+            <select name="region" required>
+                <option value="">Выберите регион</option>
+                <option value="moskva">Москва</option>
+                <option value="moskovskaya">Московская область</option>
+                <option value="spb">Санкт-Петербург</option>
+                <option value="leningradskaya">Ленинградская область</option>
+                <option value="drugoy">Другой регион</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Площадь (приблизительно)</label>
+            <input type="text" name="area" placeholder="Например: 50 м2">
+        </div>
+        
+        <div class="form-group">
+            <label>Комментарий</label>
+            <textarea name="message" placeholder="Опишите задачу, тип камня, состояние поверхности..."></textarea>
+        </div>
+        
+        <!-- Скрытое поле для защиты от спама (рекомендуется Formspree) -->
+        <input type="text" name="_gotcha" style="display:none">
+        
+        <button type="submit" class="form-submit">
+            <i class="fas fa-paper-plane"></i> Отправить заявку
+        </button>
+        <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="#">политикой конфиденциальности</a></p>
+    </form>
+</div>
             </div>
         </div>
     </section>
@@ -1370,21 +1381,25 @@
             <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
             <h3>Бесплатный замер</h3>
             <p>Оставьте свои контакты, и наш специалист свяжется с вами в течение 15 минут</p>
-            <form action="https://formspree.io/f/xgaeaybn" method="post" enctype="text/plain" onsubmit="alert('Заявка отправлена! Мы перезвоним вам в ближайшее время.');">
-                <div class="form-group">
-                    <label>Ваше имя</label>
-                    <input type="text" name="name" placeholder="Иван Иванов" required>
-                </div>
-                <div class="form-group">
-                    <label>Телефон</label>
-                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
-                </div>
-                <div class="form-group">
-                    <label>Город</label>
-                    <input type="text" name="city" placeholder="Москва">
-                </div>
-                <button type="submit" class="form-submit">Получить консультацию</button>
-            </form>
+            <form action="https://formspree.io/f/xgaeaybn" method="POST">
+    <div class="form-group">
+        <label>Ваше имя</label>
+        <input type="text" name="name" placeholder="Иван Иванов" required>
+    </div>
+    <div class="form-group">
+        <label>Телефон</label>
+        <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+    </div>
+    <div class="form-group">
+        <label>Город</label>
+        <input type="text" name="city" placeholder="Москва">
+    </div>
+    
+    <!-- Скрытое поле для защиты от спама (ловушка для ботов) -->
+    <input type="text" name="_gotcha" style="display:none">
+    
+    <button type="submit" class="form-submit">Получить консультацию</button>
+</form>
         </div>
     </div>
     <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
