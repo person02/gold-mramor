@@ -1377,34 +1377,45 @@
     </footer>
 
     <div class="modal-overlay" id="modal">
-        <div class="modal">
-            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            <h3>Бесплатный замер</h3>
-            <p>Оставьте свои контакты, и наш специалист свяжется с вами в течение 15 минут</p>
-            <form action="https://formspree.io/f/xgaeaybn" method="POST">
-    <div class="form-group">
-        <label>Ваше имя</label>
-        <input type="text" name="name" placeholder="Иван Иванов" required>
-    </div>
-    <div class="form-group">
-        <label>Телефон</label>
-        <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
-    </div>
-    <div class="form-group">
-        <label>Город</label>
-        <input type="text" name="city" placeholder="Москва">
-    </div>
-    
-    <!-- Скрытое поле для защиты от спама (ловушка для ботов) -->
-    <input type="text" name="_gotcha" style="display:none">
-    
-    <button type="submit" class="form-submit">Получить консультацию</button>
-</form>
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        <h3>Бесплатный замер</h3>
+        <p>Оставьте свои контакты, и наш специалист свяжется с вами в течение 15 минут</p>
+        
+        <!-- Добавлен id="modalForm" -->
+        <form id="modalForm" action="https://formspree.io/f/xgaeaybn" method="POST">
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" name="name" placeholder="Иван Иванов" required>
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+            </div>
+            <div class="form-group">
+                <label>Город</label>
+                <input type="text" name="city" placeholder="Москва">
+            </div>
+            
+            <!-- Скрытое поле для защиты от спама -->
+            <input type="text" name="_gotcha" style="display:none">
+            
+            <button type="submit" class="form-submit" id="modalSubmitBtn">
+                Получить консультацию
+            </button>
+        </form>
+        
+        <!-- Сообщение об успехе (скрыто по умолчанию) -->
+        <div id="modalSuccess" style="display: none; text-align: center; padding: 20px;">
+            <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745; margin-bottom: 15px;"></i>
+            <h4 style="color: #2c3e50; margin-bottom: 10px;">Заявка отправлена!</h4>
+            <p style="color: #6c757d; margin-bottom: 20px;">
+                Спасибо! Наш специалист свяжется с вами в течение 15 минут.
+            </p>
+            <button onclick="closeModal()" class="form-submit">Закрыть</button>
         </div>
     </div>
-    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
-        <i class="fas fa-arrow-up"></i>
-    </div>
+</div>
 
 
     <script>
@@ -1488,5 +1499,126 @@
             });
         });
     </script>
+	
+	
+	<script>
+// Универсальный скрипт для отправки форм через AJAX (без перезагрузки)
+document.addEventListener('DOMContentLoaded', function() {
+    // Находим обе формы: основную и модальную
+    const forms = document.querySelectorAll('#contactForm, #modalForm');
+
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Предотвращаем стандартную отправку и перезагрузку
+            
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            const formData = new FormData(form);
+            
+            // 1. Показываем состояние отправки
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+            submitBtn.disabled = true;
+            
+            // 2. Отправляем данные через Fetch API
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // === УСПЕШНАЯ ОТПРАВКА ===
+                    
+                    // Если это модальное окно
+                    if (form.id === 'modalForm') {
+                        form.style.display = 'none'; // Скрываем форму
+                        const successMsg = document.getElementById('modalSuccess');
+                        if (successMsg) successMsg.style.display = 'block'; // Показываем сообщение
+                        
+                        // Автоматически закрываем модальное окно через 3 секунды
+                        setTimeout(() => {
+                            if (typeof closeModal === 'function') closeModal();
+                        }, 3000);
+                    } 
+                    // Если это основная форма на странице
+                    else if (form.id === 'contactForm') {
+                        // Заменяем форму на красивое сообщение об успехе
+                        form.innerHTML = `
+                            <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e9ecef;">
+                                <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745; margin-bottom: 20px;"></i>
+                                <h3 style="color: #2c3e50; margin-bottom: 15px;">Заявка успешно отправлена!</h3>
+                                <p style="color: #6c757d; margin-bottom: 20px; font-size: 16px;">
+                                    Спасибо за обращение. Наш специалист свяжется с вами в течение 15 минут.
+                                </p>
+                                <button onclick="location.reload()" class="form-submit" style="background: #2c3e50; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                                    <i class="fas fa-redo"></i> Отправить еще одну заявку
+                                </button>
+                            </div>
+                        `;
+                        // Плавно прокручиваем страницу к сообщению
+                        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    
+                    form.reset(); // Очищаем поля формы
+                } else {
+                    throw new Error('Ошибка сервера');
+                }
+            })
+            .catch(error => {
+                // === ОШИБКА ОТПРАВКИ ===
+                alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже или позвоните нам: +7 (963) 652-45-45');
+                console.error('Form error:', error);
+                
+                // Возвращаем кнопку в исходное состояние
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    });
+
+    // === ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ===
+    
+    // Функция закрытия модального окна
+    window.closeModal = function() {
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Возвращаем прокрутку страницы
+            
+            // Сбрасываем модальную форму в исходное состояние при закрытии
+            setTimeout(() => {
+                const form = document.getElementById('modalForm');
+                const successMsg = document.getElementById('modalSuccess');
+                if (form) {
+                    form.style.display = 'block';
+                    form.reset();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = 'Получить консультацию';
+                        submitBtn.disabled = false;
+                    }
+                }
+                if (successMsg) {
+                    successMsg.style.display = 'none';
+                }
+            }, 300);
+        }
+    };
+
+    // Закрытие модального окна при клике на затемненный фон
+    const modalOverlay = document.querySelector('.modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                window.closeModal();
+            }
+        });
+    }
+});
+</script>
+	
+	
 </body>
 </html>
