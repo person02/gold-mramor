@@ -1502,24 +1502,25 @@
 	
 	
 	<script>
-// Универсальный скрипт для отправки форм через AJAX (без перезагрузки)
 document.addEventListener('DOMContentLoaded', function() {
-    // Находим обе формы: основную и модальную
+    // Находим обе формы
     const forms = document.querySelectorAll('#contactForm, #modalForm');
 
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Предотвращаем стандартную отправку и перезагрузку
+            // 1. ЖЁСТКО предотвращаем стандартную отправку и перезагрузку страницы
+            e.preventDefault();
+            e.stopPropagation();
             
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             const formData = new FormData(form);
             
-            // 1. Показываем состояние отправки
+            // 2. Показываем состояние отправки
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
             submitBtn.disabled = true;
             
-            // 2. Отправляем данные через Fetch API
+            // 3. Отправляем данные через Fetch API
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -1530,20 +1531,16 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 if (response.ok) {
                     // === УСПЕШНАЯ ОТПРАВКА ===
-                    
-                    // Если это модальное окно
                     if (form.id === 'modalForm') {
-                        form.style.display = 'none'; // Скрываем форму
+                        form.style.display = 'none';
                         const successMsg = document.getElementById('modalSuccess');
-                        if (successMsg) successMsg.style.display = 'block'; // Показываем сообщение
+                        if (successMsg) successMsg.style.display = 'block';
                         
                         // Автоматически закрываем модальное окно через 3 секунды
                         setTimeout(() => {
-                            if (typeof closeModal === 'function') closeModal();
+                            if (typeof window.closeModal === 'function') window.closeModal();
                         }, 3000);
-                    } 
-                    // Если это основная форма на странице
-                    else if (form.id === 'contactForm') {
+                    } else if (form.id === 'contactForm') {
                         // Заменяем форму на красивое сообщение об успехе
                         form.innerHTML = `
                             <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e9ecef;">
@@ -1560,34 +1557,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Плавно прокручиваем страницу к сообщению
                         form.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
-                    
-                    form.reset(); // Очищаем поля формы
+                    form.reset();
                 } else {
-                    throw new Error('Ошибка сервера');
+                    throw new Error('Ошибка сервера: ' + response.status);
                 }
             })
             .catch(error => {
                 // === ОШИБКА ОТПРАВКИ ===
                 alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже или позвоните нам: +7 (963) 652-45-45');
                 console.error('Form error:', error);
-                
-                // Возвращаем кнопку в исходное состояние
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             });
         });
     });
 
-    // === ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ===
-    
-    // Функция закрытия модального окна
+    // === ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА ===
+    // Теперь использует classList, как и остальной твой сайт, чтобы не ломать CSS
     window.closeModal = function() {
         const modal = document.getElementById('modal');
         if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Возвращаем прокрутку страницы
+            modal.classList.remove('active'); // Правильное закрытие
+            document.body.style.overflow = ''; // Возвращаем прокрутку
             
-            // Сбрасываем модальную форму в исходное состояние при закрытии
             setTimeout(() => {
                 const form = document.getElementById('modalForm');
                 const successMsg = document.getElementById('modalSuccess');
